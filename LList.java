@@ -1,10 +1,11 @@
 /*****************************************************
  * class LList
- * Implements a linked list of DLLNode<T>s, each containing T data
+ * Implements a linked list of DLLNodes, each containing T data
  * new in v2: add-at-index, remove
  *****************************************************/
+import java.util.Iterator;
 
-public class LList<T> implements List<T> { //your List interface must be in same dir
+public class LList<T> implements List<T> {
 
     //instance vars
     private DLLNode<T> _head;
@@ -124,9 +125,9 @@ public class LList<T> implements List<T> { //your List interface must be in same
 	    //check target node's cargo hold
 	    retVal = _head.getCargo();
 
-	    //remove target node
-	    _head = _head.getNext();	    
+	    //remove target node	    
 	    _head.setPrevious(null);
+	    _head = _head.getNext();
 	}
 	else {
 	    //walk to node
@@ -167,6 +168,37 @@ public class LList<T> implements List<T> { //your List interface must be in same
 	return retStr;
     }
 
+    public Iterator<T> iterator() {
+	return new MyIterator(_head);
+    }
+
+    private class MyIterator implements Iterator<T> {
+	private boolean _nextCalled;
+	private DLLNode<T> _cargo;
+	
+	public MyIterator(DLLNode<T> value) {
+	    _nextCalled = false;
+	    _cargo = value;
+	}
+
+	public boolean hasNext() {
+	    if (_cargo != null)
+		return true;
+	    return false;
+	}
+	public T next() {
+	    T retVal = _cargo.getCargo();
+	    _cargo = _cargo.getNext();
+	    _nextCalled = true;
+	    return retVal;
+	}
+	public void remove() {
+	    if (_nextCalled)
+		link(_cargo.getPrevious().getPrevious(), _cargo);
+	    _nextCalled = false;
+	}
+    }
+    
 
     //main method for testing
     public static void main( String[] args ) {
@@ -221,6 +253,3 @@ public class LList<T> implements List<T> { //your List interface must be in same
     }//end main
 
 }//end class LList
-
-
-
